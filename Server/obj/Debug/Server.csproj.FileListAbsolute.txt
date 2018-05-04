@@ -4,3 +4,17 @@ C:\Users\lwu\Desktop\ziliaolianjie\Server\Server\bin\Debug\Server.pdb
 C:\Users\lwu\Desktop\ziliaolianjie\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
 C:\Users\lwu\Desktop\ziliaolianjie\Server\Server\obj\Debug\Server.exe
 C:\Users\lwu\Desktop\ziliaolianjie\Server\Server\obj\Debug\Server.pdb
+C:\Users\liyi5\Desktop\C#\Server\Server\bin\Debug\Server.exe.config
+C:\Users\liyi5\Desktop\C#\Server\Server\bin\Debug\Server.exe
+C:\Users\liyi5\Desktop\C#\Server\Server\bin\Debug\Server.pdb
+C:\Users\liyi5\Desktop\C#\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
+C:\Users\liyi5\Desktop\C#\Server\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
+C:\Users\liyi5\Desktop\C#\Server\Server\obj\Debug\Server.exe
+C:\Users\liyi5\Desktop\C#\Server\Server\obj\Debug\Server.pdb
+C:\Users\liyi5\Documents\GitHub\Server\Server\bin\Debug\Server.exe.config
+C:\Users\liyi5\Documents\GitHub\Server\Server\bin\Debug\Server.exe
+C:\Users\liyi5\Documents\GitHub\Server\Server\bin\Debug\Server.pdb
+C:\Users\liyi5\Documents\GitHub\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
+C:\Users\liyi5\Documents\GitHub\Server\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
+C:\Users\liyi5\Documents\GitHub\Server\Server\obj\Debug\Server.exe
+C:\Users\liyi5\Documents\GitHub\Server\Server\obj\Debug\Server.pdb

@@ -9,116 +9,124 @@ namespace Server
 {
     class Crypto
     {
-        /*
-         * Steps:
-         * 1. Convert plaintext from byte[] to Int32<>
-         * 2. Add salt
-         * 3. Convert plaintext with salt from Int32<> to byte[]
-         * 4. Encrypt data
-         * 5. Decrypt data
-         * 6. Convert decrypted plaintext with salt from Int32<> to byte[]
-         * 7. Remove salt to obtian the original plaintext
-         */
 
-        static Random ran = new Random();
-
-        public List<Int32> ConvertByteToInt32(byte[] dataByteArray)
+        public Int32[] Encryption1(byte[] plaintext)
         {
-            List<Int32> intList = new List<int>();
-            foreach (byte dataByte in dataByteArray)
-            {
-                intList.Add(Convert.ToInt32(dataByte));
-            }
-            return intList;
+            Int32[] plaintexInt = ConvertByteToInt32(plaintext);
+            Int32[] plaintextIntAddSalt = AddSalt(plaintexInt);
+            Int32[] ciphertextInt = Encrypt1(plaintextIntAddSalt);
+            return ciphertextInt;
         }
 
-        //Each element of the inserted intList is not larger than 256.
-        public byte[] ConvertSmallIntToByte(List<Int32> intList)
+        public Int32[] Decryption1(Int32[] ciphertextInt)
         {
-            int length = intList.Count;
-            byte[] byteArray = new byte[length];
-            for (int i = 0; i < length; i++)
-            {
-                byteArray[i] = Convert.ToByte(intList[i] & 0xFF);
-            }
-            return byteArray;
+            Int32[] plaintextIntWithSalt = Decrypt1(ciphertextInt);
+            Int32[] plaintextIntWithoutSalt = RemoveSalt(plaintextIntWithSalt);
+            return plaintextIntWithoutSalt;
         }
 
-        public byte[] ConvertBigIntToByte(List<Int32> intList)
+        public Int32[] ConvertByteToInt32(byte[] dataByteArray)
         {
-            byte[] byteArray = new byte[intList.Count * 2];
-            for (int i = 0; i < intList.Count; i++)
+            int length = dataByteArray.Length;
+            Int32[] intArray = new Int32[length];
+            for (int i = 0; i< length; i++)
             {
-                byteArray[i * 2] = Convert.ToByte((intList[i] >> 8) & 0xFF);
-                byteArray[i * 2 + 1] = Convert.ToByte(intList[i] & 0xFF);
-            }
-            return byteArray;
-        }
-
-        public List<Int32> ConvertByteToBigInt(byte[] byteArray)
-        {
-            List<Int32> intList = new List<Int32>();
-            int length = byteArray.Length / 2;
-            for (int i = 0; i < length; i++)
-            {
-                Int32 x = Convert.ToInt32(byteArray[i * 2]);
-                Int32 y = Convert.ToInt32(byteArray[i * 2 + 1]);
-                intList.Add(x * 256 + y);
-            }
-            return intList;
-        }
-
-        public byte[] ConvertInt32ToByteWithSalt(List<Int32> numList)
-        {
-            int listLength = numList.Count;
-            byte[] byteArray = new byte[listLength * 4];
-            for (int i = 0; i < listLength; i++)
-            {
-                Int32 num = numList[i];
-                //Salt, ensure no element will be odd numbers between 128 and 256
-                byteArray[i * 4] = Convert.ToByte((ran.Next(64, 128) * 2 + 1) & 0xFF);
-                byteArray[i * 4 + 1] = Convert.ToByte((ran.Next(64, 128) * 2 + 1) & 0xFF);
-                byteArray[i * 4 + 2] = Convert.ToByte((ran.Next(64, 128) * 2 + 1) & 0xFF);
-                //Useful data
-                byteArray[i * 4 + 3] = Convert.ToByte(num & 0xFF);
-            }
-            return byteArray;
-        }
-
-        public List<Int32> ConvertByteToInt32RemoveSalt(byte[] byteArray)
-        {
-            int length = byteArray.Length;
-            List<Int32> intArray = new List<int>();
-            for (int i = 0; i < length / 4; i++)
-            {
-                intArray.Add(Convert.ToInt32(byteArray[4 * i + 3]));
+                intArray[i] = (Int32)(dataByteArray[i]);
             }
             return intArray;
         }
 
-        public List<Int32> Encrypt1(List<Int32> intList)
+        //Each element of the inserted intList is not larger than 256.
+        public byte[] ConvertSmallIntToByte(Int32[] intArray)
         {
-            List<Int32> encryptedList = new List<Int32>();
-            int listLength = intList.Count;
-            for (int i = 0; i < listLength - 1; i++)
+            int length = intArray.Length;
+            byte[] byteArray = new byte[length];
+            for (int i = 0; i < length; i++)
             {
-                encryptedList.Add(intList[i] * intList[i + 1]);
+                byteArray[i] = Convert.ToByte(intArray[i]);
             }
-            //Embedded key element, this element will be useful for decryption later
-            encryptedList.Add(intList[0] * 255);
-            return encryptedList;
+            return byteArray;
         }
 
-        public List<Int32> Decrypt1(List<Int32> intList)
+        public byte[] ConvertBigIntToByte(Int32[] intArray)
         {
-            List<Int32> decryptedList = new List<Int32>();
-            int listLength = intList.Count;
-            decryptedList.Add(intList[listLength - 1] / 255);
-            for (int i = 0; i < listLength - 1; i++)
+            byte[] byteArray = new byte[intArray.Length * 2];
+            for (int i = 0; i < intArray.Length; i++)
             {
-                decryptedList.Add(intList[i] / decryptedList[i]);
+                byteArray[i * 2] = Convert.ToByte((intArray[i] >> 8) & 0xFF);
+                byteArray[i * 2 + 1] = Convert.ToByte(intArray[i] & 0xFF);
             }
-            return decryptedList;
+            return byteArray;
+        }
+
+        public Int32[] ConvertByteToBigInt(byte[] byteArray)
+        {
+            int length = byteArray.Length / 2;
+            Int32[] intArray = new Int32[length];
+            for (int i = 0; i < length; i++)
+            {
+                Int32 x = (Int32)byteArray[i * 2];
+                Int32 y = (Int32)byteArray[i * 2 + 1];
+                intArray[i] = x * 256 + y;
+            }
+            return intArray;
+        }
+
+
+        private Int32[] AddSalt(Int32[] numArray)
+        {
+            Random ran = new Random();
+            int length = numArray.Length;
+            Int32[] saltedArray = new Int32[length * 4];
+            for(int i = 0; i < length; i++)
+            {
+                saltedArray[i * 4] = ran.Next(64, 127) * 2 + 1;
+                saltedArray[i * 4 + 1] = (numArray[i] == 0) ? (ran.Next(64, 127) * 2 + 1) : ((numArray[i] % 2 == 1) ? (ran.Next(64, 127) * 2 + 1) : (ran.Next(65, 127) * 2));
+                saltedArray[i * 4 + 2] = (numArray[i] == 0) ? (ran.Next(65, 127) * 2) : ((numArray[i] % 2 == 1) ? (ran.Next(64, 127) * 2 + 1) : (ran.Next(64, 127) * 2 + 1));
+                saltedArray[i * 4 + 3] = (numArray[i] == 0) ? (ran.Next(64, 127) * 2 + 1) : ((numArray[i] % 2 == 1) ? (((Int32)saltedArray[i*4+2] + numArray[i]) / 2) : (numArray[i] + 1));
+            }
+            return saltedArray;
+        }
+
+
+        private Int32[] RemoveSalt(Int32[] saltedArray)
+        {
+            int length = saltedArray.Length / 4;
+            Int32[] numArray = new Int32[length];
+            for(int i = 0; i < length; i++)
+            {
+                Int32 num = (saltedArray[i * 4 + 1] % 2 == 0) ? (saltedArray[i * 4 + 3] - 1) : ((saltedArray[i * 4 + 2] % 2 == 0) ? 0 : (saltedArray[i * 4 + 3] * 2 - saltedArray[i * 4 + 2]));
+                numArray[i] = num;
+            }
+            return numArray;
+        }
+
+
+        private Int32[] Encrypt1(Int32[] intArray)
+        {
+            int length = intArray.Length;
+            Int32[] encryptedArray = new Int32[length];
+            for (int i = 0; i < length - 1; i++)
+            {
+                encryptedArray[i] = intArray[i] * intArray[i + 1];
+            }
+            //Embedded key element, this element will be useful for decryption later
+            encryptedArray[length - 1] = intArray[0] * 255;
+            return encryptedArray;
+        }
+
+
+        private Int32[] Decrypt1(Int32[] intArray)
+        {
+            int length = intArray.Length;
+            Int32[] decryptedArray = new Int32[length];
+            decryptedArray[0] = intArray[length - 1] / 255;
+            for (int i = 0; i < length - 1; i++)
+            {
+                decryptedArray[i + 1] = intArray[i] / decryptedArray[i];
+            }
+            return decryptedArray;
+
         }
     }
 }
