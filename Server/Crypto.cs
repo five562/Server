@@ -10,19 +10,22 @@ namespace Server
     class Crypto
     {
 
-        public Int32[] Encryption1(byte[] plaintext)
+        public byte[] Encryption1(byte[] plaintext)
         {
             Int32[] plaintexInt = ConvertByteToInt32(plaintext);
             Int32[] plaintextIntAddSalt = AddSalt(plaintexInt);
             Int32[] ciphertextInt = Encrypt1(plaintextIntAddSalt);
-            return ciphertextInt;
+            byte[] ciphertextByte = ConvertBigIntToByte(ciphertextInt);
+            return ciphertextByte;
         }
 
-        public Int32[] Decryption1(Int32[] ciphertextInt)
+        public byte[] Decryption1(byte[] ciphertextByte)
         {
+            Int32[] ciphertextInt = ConvertByteToBigInt(ciphertextByte);
             Int32[] plaintextIntWithSalt = Decrypt1(ciphertextInt);
             Int32[] plaintextIntWithoutSalt = RemoveSalt(plaintextIntWithSalt);
-            return plaintextIntWithoutSalt;
+            byte[] plaintextByteWithoutSalt = ConvertSmallIntToByte(plaintextIntWithoutSalt);
+            return plaintextByteWithoutSalt;
         }
 
         public Int32[] ConvertByteToInt32(byte[] dataByteArray)
