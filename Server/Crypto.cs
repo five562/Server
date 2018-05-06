@@ -13,18 +13,26 @@ namespace Server
         public byte[] Encryption1(byte[] plaintext)
         {
             Int32[] plaintexInt = ConvertByteToInt32(plaintext);
+            plaintext = null;
             Int32[] plaintextIntAddSalt = AddSalt(plaintexInt);
+            plaintexInt = null;
             Int32[] ciphertextInt = Encrypt1(plaintextIntAddSalt);
+            plaintextIntAddSalt = null;
             byte[] ciphertextByte = ConvertBigIntToByte(ciphertextInt);
+            ciphertextInt = null;
             return ciphertextByte;
         }
 
         public byte[] Decryption1(byte[] ciphertextByte)
         {
             Int32[] ciphertextInt = ConvertByteToBigInt(ciphertextByte);
+            ciphertextByte = null;
             Int32[] plaintextIntWithSalt = Decrypt1(ciphertextInt);
+            ciphertextInt = null;
             Int32[] plaintextIntWithoutSalt = RemoveSalt(plaintextIntWithSalt);
+            plaintextIntWithSalt = null;
             byte[] plaintextByteWithoutSalt = ConvertSmallIntToByte(plaintextIntWithoutSalt);
+            plaintextIntWithoutSalt = null;
             return plaintextByteWithoutSalt;
         }
 
