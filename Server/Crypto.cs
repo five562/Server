@@ -89,12 +89,13 @@ namespace Server
             Random ran = new Random();
             int length = numArray.Length;
             Int32[] saltedArray = new Int32[length * 4];
-            for(int i = 0; i < length; i++)
+            for (int i = 0; i < length; i++)
             {
                 saltedArray[i * 4] = ran.Next(64, 127) * 2 + 1;
                 saltedArray[i * 4 + 1] = (numArray[i] == 0) ? (ran.Next(64, 127) * 2 + 1) : ((numArray[i] % 2 == 1) ? (ran.Next(64, 127) * 2 + 1) : (ran.Next(65, 127) * 2));
                 saltedArray[i * 4 + 2] = (numArray[i] == 0) ? (ran.Next(65, 127) * 2) : ((numArray[i] % 2 == 1) ? (ran.Next(64, 127) * 2 + 1) : (ran.Next(64, 127) * 2 + 1));
                 saltedArray[i * 4 + 3] = (numArray[i] == 0) ? (ran.Next(64, 127) * 2 + 1) : ((numArray[i] % 2 == 1) ? (((Int32)saltedArray[i*4+2] + numArray[i]) / 2) : (numArray[i] + 1));
+                
             }
             return saltedArray;
         }

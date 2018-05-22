@@ -11,19 +11,21 @@ namespace Server
 {
     class Program
     {
+
         static void Main()
         {
-            /*
+            
             Connector connector = new Connector();
             Thread connectorThread = new Thread(new ThreadStart(connector.Start));
             connectorThread.Name = "Connector";
             connectorThread.Start();
-            */
 
+            XmlParser p = new XmlParser();
+            p.CreateFolderTreeXml();
+            
 
+            /*
             Crypto encrypt = new Crypto();
-
-
             String fileName = "test.txt";
             String filePath = @"C:\Users\liyi5\Desktop\";
 
@@ -53,7 +55,7 @@ namespace Server
                 byte[] plaintext1 = encrypt.Decryption1(plaintext2);
                 plaintext2 = null;
             }
-
+            */
 
 
         }

@@ -8,6 +8,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using System.Diagnostics;
+using System.Xml;
 
 namespace Server
 {
@@ -30,6 +31,8 @@ namespace Server
     }
     class Connector
     {
+        XmlParser P = new XmlParser();
+
         const int receiveBufferSize = 1000;
         const int port = 20184;
         const int maxConnetions = 10;
@@ -160,19 +163,52 @@ namespace Server
 
             //Read the data sent from client
             String receives = Encoding.ASCII.GetString(e.Buffer, e.Offset, e.BytesTransferred);
-            Console.WriteLine(receives);
+            Console.Write("Server receives " + receives);
+            int caseNum = (receives.Length < 30) ? 1 : 2;
+            switch (caseNum)
+            {
+                case 1:
+                    byte[] resp = ProcessResponse1(receives);
+                    Buffer.BlockCopy(resp, 0, e.Buffer, e.Offset, resp.Length);
+                    e.SetBuffer(e.Offset, resp.Length);
+                    break;
+                case 2:
+                    XmlParser p = new XmlParser();
+                    p.SaveTestCase(p.GenerateXmlFile(receives));
+                    p.EditFolderTreeXml(p.LoadXmlFile(p.GenerateXmlFile(receives), "/TestCase"));
+                    break;
+                default:
+                    break;
+            }
+            
 
+            /*
+            Crypto encrypt = new Crypto();
+            String fileName = "test.txt";
+            String filePath = @"C:\Users\liyi5\Desktop\";
+            byte[] str = File.ReadAllBytes(filePath + fileName);
+            byte[] resp = new byte[8];
+            foreach (byte x in str)
+            {
+                byte[] b = new byte[] { x };
+                resp = encrypt.Encryption1(b);
+                Buffer.BlockCopy(resp, 0, e.Buffer, e.Offset, resp.Length);  // Copy into the transmitt buffer
+                e.SetBuffer(e.Offset, resp.Length);
+            }
+            */
 
-            String response = "Hi, dear";   //////////////////Process message here, it will be re-edited later//////////////////
-            byte[] resp = Encoding.ASCII.GetBytes(response);
-            Buffer.BlockCopy(resp, 0, e.Buffer, e.Offset, resp.Length);  // Copy into the transmitt buffer
-            e.SetBuffer(e.Offset, resp.Length);
+                //String response = "Hi, dear";   //////////////////Process message here, it will be re-edited later//////////////////
+                //byte[] resp = Encoding.ASCII.GetBytes(response);
+            //Buffer.BlockCopy(resp, 0, e.Buffer, e.Offset, resp.Length);  // Copy into the transmitt buffer
+            //e.SetBuffer(e.Offset, resp.Length);
             // Start an asynchronous request to send
             if (!token.Socket.SendAsync(e))     //I/O completed synchronously, no event raised, must handle now
             {
                 ProcessSend(e);
             }
         }
+
+        
 
         private void ProcessSend(SocketAsyncEventArgs e)
         {
@@ -211,6 +247,34 @@ namespace Server
             Interlocked.Decrement(ref _numConnectedSockets);
             Debug.WriteLine("Connecttion dropped, {0} remaining.", _numConnectedSockets);
             Push(e);    //Free the SocketAsyncEventArg, so that they can be reused by another client
+        }
+
+        private byte[] ProcessResponse1(string receivedRequest)
+        {
+            string request = receivedRequest;
+            switch (request)
+            {
+                case "Get Folder Tree":
+                    if (File.Exists(@"C:\Users\liyi5\Desktop\folderTree.xml")){
+                        byte[] fileTreeByte = File.ReadAllBytes(@"C:\Users\liyi5\Desktop\folderTree.xml");
+                        return fileTreeByte;
+                    }
+                    else
+                    {
+                        byte[] resp = Encoding.ASCII.GetBytes("No project is found");
+                        return resp;
+                    }
+                /*    
+                case "Send XML File":
+                    XmlParser p = new XmlParser();
+                    p.SaveTestCase(p.GenerateXmlFile(receivedRequest));
+                    return Encoding.ASCII.GetBytes("Test case is saved successfully");
+                */
+                default:
+                    return Encoding.ASCII.GetBytes("Not a valid request");
+
+            }
+            
         }
 
     }
